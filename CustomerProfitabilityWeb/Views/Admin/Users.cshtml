@@ -1,0 +1,285 @@
+﻿@model IEnumerable<dynamic>
+@{
+    ViewData["Title"] = "Quản lý Users";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-users me-2"></i>Quản lý Users</h2>
+            <p class="text-muted">Danh sách tài khoản người dùng</p>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0" style="border-left: 4px solid #8AAAE5 !important;">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-users me-2"></i>Tổng Users
+                    </h6>
+                    <h2 class="mb-0" style="color: #8AAAE5; font-weight: 700;">@Model.Count()</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0" style="border-left: 4px solid #4CAF50 !important;">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-check-circle me-2"></i>Active
+                    </h6>
+                    <h2 class="mb-0" style="color: #4CAF50; font-weight: 700;">@Model.Count(x => x.IsActive)</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0" style="border-left: 4px solid #FF9800 !important;">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-user-shield me-2"></i>Admin
+                    </h6>
+                    <h2 class="mb-0" style="color: #FF9800; font-weight: 700;">@Model.Count(x => x.RoleName == "Admin")</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0" style="border-left: 4px solid #9C27B0 !important;">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-user-tie me-2"></i>Manager
+                    </h6>
+                    <h2 class="mb-0" style="color: #9C27B0; font-weight: 700;">@Model.Count(x => x.RoleName == "Manager")</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5><i class="fas fa-list me-2"></i>Danh sách Users</h5>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createUserModal">
+                    <i class="fas fa-plus me-2"></i>Tạo User mới
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Username</th>
+                            <th>Họ tên</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày tạo</th>
+                            <th>Lần login cuối</th>
+                            <th class="text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td><strong>@user.UserID</strong></td>
+                                <td>
+                                    <i class="fas fa-user me-2"></i>
+                                    <strong>@user.Username</strong>
+                                </td>
+                                <td>@user.FullName</td>
+                                <td>@user.Email</td>
+                                <td>
+                                    @if (user.RoleName == "Admin")
+                                    {
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-crown me-1"></i>Admin
+                                        </span>
+                                    }
+                                    else if (user.RoleName == "Manager")
+                                    {
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-user-tie me-1"></i>Manager
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-user me-1"></i>User
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (user.IsActive)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-times me-1"></i>Inactive
+                                        </span>
+                                    }
+                                </td>
+                                <td>@((DateTime)user.CreatedDate).ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (user.LastLogin != null)
+                                    {
+                                        try
+                                        {
+                                            var lastLoginDate = (DateTime)user.LastLogin;
+                                            @lastLoginDate.ToString("dd/MM/yyyy HH:mm")
+                                        }
+                                        catch
+                                        {
+                                            <text>N/A</text>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Chưa login</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a href="/Admin/UserDetails/@user.UserID" class="btn btn-sm btn-outline-primary" title="Chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-warning" onclick="toggleStatus(@user.UserID)" title="Toggle Status">
+                                        <i class="fas fa-power-off"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(@user.UserID)" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create User Modal -->
+<div class="modal fade" id="createUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Tạo User mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createUserForm">
+                    <div class="mb-3">
+                        <label class="form-label">Username <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Họ tên <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="fullname" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Role <span class="text-danger">*</span></label>
+                        <select class="form-select" id="roleId" required>
+                            <option value="1">Admin</option>
+                            <option value="2">Manager</option>
+                            <option value="3">User</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" onclick="createUser()">Tạo User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function createUser() {
+            const data = {
+                Username: $('#username').val(),
+                Password: $('#password').val(),
+                FullName: $('#fullname').val(),
+                Email: $('#email').val(),
+                RoleID: parseInt($('#roleId').val())
+            };
+
+            $.ajax({
+                url: '/Admin/CreateUser',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Lỗi khi tạo user');
+                }
+            });
+        }
+
+        function toggleStatus(userId) {
+            $.ajax({
+                url: '/Admin/ToggleUserStatus/' + userId,
+                type: 'POST',
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Lỗi khi toggle status');
+                }
+            });
+        }
+
+        function deleteUser(userId) {
+            if (!confirm('Bạn có chắc muốn xóa user này?')) {
+                return;
+            }
+
+            $.ajax({
+                url: '/Admin/DeleteUser/' + userId,
+                type: 'POST',
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Lỗi khi xóa user');
+                }
+            });
+        }
+    </script>
+}

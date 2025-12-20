@@ -1,0 +1,1058 @@
+﻿@{
+    ViewData["Title"] = "Dashboard Tổng quan";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-chart-pie me-2"></i>Dashboard - Tổng quan kinh doanh</h2>
+            <p class="text-muted">Chào mừng @ViewBag.FullName!</p>
+        </div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="row mb-4">
+        <div class="col-md-2">
+            <div class="card shadow-sm border-0" style="border-left: 4px solid #8AAAE5 !important;">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-users me-2"></i>Khách hàng
+                    </h6>
+                    <h2 class="mb-2" style="color: #8AAAE5; font-weight: 700;">@ViewBag.TotalCustomers</h2>
+                    <small class="text-muted">Active</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm border-0" style="border-left: 4px solid #4CAF50 !important;">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-dollar-sign me-2"></i>Actual
+                    </h6>
+                    <h2 class="mb-2" style="color: #4CAF50; font-weight: 700;">@(((decimal)ViewBag.TotalRevenue / 1000000).ToString("N0"))M</h2>
+                    <small class="text-muted">VNĐ</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm border-0" style="border-left: 4px solid #FF9800 !important;">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-percentage me-2"></i>Margin
+                    </h6>
+                    <h2 class="mb-2" style="color: #FF9800; font-weight: 700;">@ViewBag.AvgMargin.ToString("N1")%</h2>
+                    <small class="text-muted">Avg</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm border-0" style="border-left: 4px solid #9C27B0 !important;">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-chart-line me-2"></i>Budget
+                    </h6>
+                    <h2 class="mb-2" style="color: #9C27B0; font-weight: 700;">@(((decimal)ViewBag.BudgetRevenue / 1000000).ToString("N0"))M</h2>
+                    <small class="text-muted">VNĐ</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm border-0" style="border-left: 4px solid #00BCD4 !important;">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-chart-bar me-2"></i>YoY
+                    </h6>
+                    <h2 class="mb-2" style="color: #00BCD4; font-weight: 700;">+@ViewBag.YoYGrowth.ToString("N1")%</h2>
+                    <small class="text-success">Growth</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card shadow-sm border-0" style="border-left: 4px solid #F44336 !important;">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-shopping-cart me-2"></i>Giao dịch
+                    </h6>
+                    <h2 class="mb-2" style="color: #F44336; font-weight: 700;">@ViewBag.TotalTransactions</h2>
+                    <small class="text-muted">Trans</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <ul class="nav nav-tabs mb-3" id="dashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button">
+                <i class="fas fa-chart-bar me-2"></i>Tổng quan
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="revenue-tab" data-bs-toggle="tab" data-bs-target="#revenue" type="button">
+                <i class="fas fa-dollar-sign me-2"></i>Doanh thu
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="location-tab" data-bs-toggle="tab" data-bs-target="#location" type="button">
+                <i class="fas fa-map-marked-alt me-2"></i>Vùng miền
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button">
+                <i class="fas fa-table me-2"></i>Chi tiết
+            </button>
+        </li>
+    </ul>
+
+    <!-- TAB CONTENT -->
+    <div class="tab-content" id="dashboardTabsContent">
+        <!-- TAB 1: OVERVIEW -->
+        <div class="tab-pane fade show active" id="overview">
+            <div class="row">
+                <!-- Chart 1: Revenue by Month -->
+                <div class="col-md-12 mb-4">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="mb-3">
+                                <i class="fas fa-chart-line me-2" style="color: #8AAAE5;"></i>
+                                Doanh thu theo tháng (Actual vs Budget)
+                            </h5>
+                            <div id="chartRevenueByMonth" style="width: 100%; height: 400px;"></div>
+                            <div id="insightsRevenueByMonth" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Revenue by Product -->
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="mb-3">
+                                <i class="fas fa-chart-bar me-2" style="color: #4CAF50;"></i>
+                                Top 10 sản phẩm (Doanh thu)
+                            </h5>
+                            <div id="chartRevenueByProduct" style="width: 100%; height: 400px;"></div>
+                            <div id="insightsRevenueByProduct" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart 3: Margin by Product -->
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="mb-3">
+                                <i class="fas fa-percentage me-2" style="color: #FF9800;"></i>
+                                Top 10 sản phẩm (Biên lợi nhuận)
+                            </h5>
+                            <div id="chartMarginByProduct" style="width: 100%; height: 400px;"></div>
+                            <div id="insightsMarginByProduct" class="mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: REVENUE -->
+        <div class="tab-pane fade" id="revenue">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="mb-3">
+                        <i class="fas fa-chart-bar me-2" style="color: #4CAF50;"></i>
+                        Phân tích doanh thu chi tiết
+                    </h5>
+                    <div id="chartRevenueDetail" style="width: 100%; height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: LOCATION -->
+        <div class="tab-pane fade" id="location">
+            <!-- HÀNG 1: Bản đồ VN (trái) + Pie Chart Khu vực + Stats (phải) -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="mb-3">
+                                <i class="fas fa-map-marked-alt me-2" style="color: #FF9800;"></i>
+                                Bản đồ Doanh thu Việt Nam
+                            </h5>
+                            <div id="chartVietnamMap" style="width: 100%; height: 800px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Pie Chart Khu vực -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-3">
+                                <i class="fas fa-chart-pie me-2" style="color: #E91E63;"></i>
+                                Doanh thu theo Khu vực
+                            </h5>
+                            <div id="chartRevenueByRegion" style="width: 100%; height: 350px;"></div>
+                            <div id="insightsRevenueByRegion" class="mt-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Khu vực -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="mb-3">
+                                <i class="fas fa-list me-2" style="color: #8AAAE5;"></i>
+                                Thống kê Khu vực
+                            </h5>
+                            <div id="regionStats"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HÀNG 2: Bar Chart Tỉnh/Thành - FULL WIDTH -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="mb-3">
+                                <i class="fas fa-chart-bar me-2" style="color: #4CAF50;"></i>
+                                Top 20 Tỉnh/Thành theo Doanh thu
+                            </h5>
+                            <div id="chartRevenueByProvince" style="width: 100%; height: 500px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: DETAILS -->
+        <div class="tab-pane fade" id="details">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="mb-3">
+                        <i class="fas fa-table me-2" style="color: #F44336;"></i>
+                        Bảng dữ liệu chi tiết
+                    </h5>
+                    <div class="alert alert-info">
+                        <i class="fas fa-database me-2"></i>
+                        Data grid đang phát triển
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Load các chart của tab mặc định (Tổng quan) ngay
+            loadRevenueByMonth();
+            loadRevenueByProduct();
+            loadMarginByProduct();
+
+            // KHỞI TẠO NÚT "XEM PHÂN TÍCH" (không load data ngay)
+            loadInsights('revenue-by-month', 'insightsRevenueByMonth');
+            loadInsights('revenue-by-product', 'insightsRevenueByProduct');
+            loadInsights('margin-by-product', 'insightsMarginByProduct');
+
+            // Tab Location
+            $('#location-tab').one('shown.bs.tab', function () {
+                loadRevenueByRegion();
+                loadRevenueByProvince();
+                loadRegionStats();
+                loadVietnamMap();
+                loadInsights('revenue-by-region', 'insightsRevenueByRegion');
+
+                setTimeout(function() {
+                    echarts.getInstanceByDom(document.getElementById('chartVietnamMap'))?.resize();
+                    echarts.getInstanceByDom(document.getElementById('chartRevenueByProvince'))?.resize();
+                }, 100);
+            });
+        });
+
+        // Chart 1: Revenue by Month
+        function loadRevenueByMonth() {
+            $.get('/Dashboard/GetChartData?chartType=revenue-by-month', function(response) {
+                if (response.success) {
+                    const data = response.data;
+                    const months = [...new Set(data.map(x => `${x.year}-${String(x.month).padStart(2, '0')}`))].sort();
+                    const actualData = months.map(m => {
+                        const item = data.find(x => `${x.year}-${String(x.month).padStart(2, '0')}` === m && x.scenario === 'Actual');
+                        return item ? (item.revenue / 1000000) : 0;
+                    });
+                    const budgetData = months.map(m => {
+                        const item = data.find(x => `${x.year}-${String(x.month).padStart(2, '0')}` === m && x.scenario === 'Budget');
+                        return item ? (item.revenue / 1000000) : 0;
+                    });
+
+                    const chart = echarts.init(document.getElementById('chartRevenueByMonth'));
+                    chart.setOption({
+                        tooltip: { trigger: 'axis' },
+                        legend: { data: ['Actual', 'Budget'] },
+                        xAxis: { type: 'category', data: months },
+                        yAxis: { type: 'value', name: 'Triệu VNĐ' },
+                        series: [
+                            { name: 'Actual', type: 'line', data: actualData, smooth: true, itemStyle: { color: '#4CAF50' } },
+                            { name: 'Budget', type: 'line', data: budgetData, smooth: true, itemStyle: { color: '#9C27B0' } }
+                        ]
+                    });
+                    window.addEventListener('resize', () => chart.resize());
+                }
+            });
+        }
+
+                        // Chart 2: Revenue by Product
+        function loadRevenueByProduct() {
+            $.get('/Dashboard/GetChartData?chartType=revenue-by-product', function(response) {
+                if (response.success) {
+                    const data = response.data;
+                    console.log('Product data:', data);
+
+                    // Gộp Actual & Budget cho từng sản phẩm
+                    const productRevenue = {};
+                    data.forEach(item => {
+                        if (!productRevenue[item.productName]) {
+                            productRevenue[item.productName] = { actual: 0, budget: 0 };
+                        }
+                        if (item.scenario === 'Actual') {
+                            productRevenue[item.productName].actual = item.revenue;
+                        } else if (item.scenario === 'Budget') {
+                            productRevenue[item.productName].budget = item.revenue;
+                        }
+                    });
+
+                    // Sort theo tổng doanh thu và lấy top 10
+                    const sortedProducts = Object.keys(productRevenue)
+                        .map(name => ({
+                            name: name,
+                            total: productRevenue[name].actual + productRevenue[name].budget,
+                            actual: productRevenue[name].actual,
+                            budget: productRevenue[name].budget
+                        }))
+                        .sort((a, b) => b.total - a.total)
+                        .slice(0, 10);
+
+                    const products = sortedProducts.map(p => p.name);
+                    const actualData = sortedProducts.map(p => (p.actual / 1000000).toFixed(0));
+                    const budgetData = sortedProducts.map(p => (p.budget / 1000000).toFixed(0));
+
+                    console.log('Products:', products);
+                    console.log('Actual:', actualData);
+                    console.log('Budget:', budgetData);
+
+                    const chart = echarts.init(document.getElementById('chartRevenueByProduct'));
+                    chart.setOption({
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: { type: 'shadow' },
+                            textStyle: {
+                                fontFamily: 'Times New Roman, serif',
+                                fontSize: 14
+                            },
+                            formatter: function(params) {
+                                let result = '<div style="font-family: Times New Roman, serif;">';
+                                result += '<strong style="font-size: 15px;">' + params[0].axisValue + '</strong><br/>';
+                                params.forEach(item => {
+                                    if (parseFloat(item.value) > 0) {
+                                        result += '<span style="display:inline-block;margin-right:5px;border-radius:50%;width:10px;height:10px;background-color:' + item.color + ';"></span>';
+                                        result += item.seriesName + ': <strong>' +
+                                                  parseFloat(item.value).toLocaleString() + 'M VNĐ</strong><br/>';
+                                    }
+                                });
+                                result += '</div>';
+                                return result;
+                            },
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            borderColor: '#ccc',
+                            borderWidth: 1,
+                            extraCssText: 'box-shadow: 0 2px 8px rgba(0,0,0,0.15);'
+                        },
+                        legend: {
+                            data: ['Actual', 'Budget'],
+                            top: 0,
+                            textStyle: {
+                                fontSize: 12,
+                                fontFamily: 'Arial, sans-serif'
+                            }
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '18%',
+                            top: '12%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: products,
+                            axisLabel: {
+                                rotate: 45,
+                                interval: 0,
+                                fontSize: 10,
+                                overflow: 'truncate',
+                                width: 90,
+                                formatter: function(value) {
+                                    return value.length > 18 ? value.substring(0, 18) + '...' : value;
+                                }
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: 'Triệu VNĐ',
+                            nameTextStyle: {
+                                fontSize: 12,
+                                padding: [0, 0, 0, 40]
+                            },
+                            axisLabel: {
+                                formatter: function(value) {
+                                    if (value >= 1000) {
+                                        return (value / 1000).toFixed(1) + 'B';
+                                    }
+                                    return value + 'M';
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                name: 'Actual',
+                                type: 'bar',
+                                data: actualData,
+                                itemStyle: {
+                                    color: '#4CAF50',
+                                    borderRadius: [4, 4, 0, 0]
+                                },
+                                barMaxWidth: 35,
+                                barGap: '20%',      // Khoảng cách giữa Actual và Budget
+                                barCategoryGap: '35%', // Khoảng cách giữa các nhóm sản phẩm
+                                label: {
+                                    show: false
+                                },
+                                emphasis: {
+                                    itemStyle: {
+                                        color: '#388E3C',
+                                        shadowBlur: 10,
+                                        shadowColor: 'rgba(0, 0, 0, 0.3)'
+                                    }
+                                }
+                            },
+                            {
+                                name: 'Budget',
+                                type: 'bar',
+                                data: budgetData,
+                                itemStyle: {
+                                    color: '#9C27B0',
+                                    borderRadius: [4, 4, 0, 0]
+                                },
+                                barMaxWidth: 35,
+                                label: {
+                                    show: false
+                                },
+                                emphasis: {
+                                    itemStyle: {
+                                        color: '#7B1FA2',
+                                        shadowBlur: 10,
+                                        shadowColor: 'rgba(0, 0, 0, 0.3)'
+                                    }
+                                }
+                            }
+                        ]
+                    });
+
+                    window.addEventListener('resize', () => chart.resize());
+                }
+            });
+        }
+        
+        // Chart 3: Margin by Product
+        function loadMarginByProduct() {
+            $.get('/Dashboard/GetChartData?chartType=margin-by-product', function(response) {
+                if (response.success) {
+                    const data = response.data;
+                    const products = data.map(x => x.productName);
+                    const margins = data.map(x => x.avgMargin.toFixed(2));
+
+                    const chart = echarts.init(document.getElementById('chartMarginByProduct'));
+                    chart.setOption({
+                        tooltip: {
+                            trigger: 'axis',
+                            formatter: '{b}: {c}%'
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '15%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: products,
+                            axisLabel: {
+                                rotate: 45,
+                                interval: 0,
+                                fontSize: 10,
+                                overflow: 'truncate',
+                                width: 80
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '%',
+                            max: 50
+                        },
+                        series: [{
+                            type: 'bar',
+                            data: margins,
+                            barWidth: '50%',
+                            itemStyle: {
+                                color: function(params) {
+                                    const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                                                  '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'];
+                                    return colors[params.dataIndex % colors.length];
+                                }
+                            },
+                            label: {
+                                show: true,
+                                position: 'top',
+                                formatter: '{c}%',
+                                fontSize: 10
+                            }
+                        }]
+                    });
+                    window.addEventListener('resize', () => chart.resize());
+                }
+            });
+        }
+
+        // Chart 4: Revenue by Region
+        function loadRevenueByRegion() {
+            $.get('/Dashboard/GetChartData?chartType=revenue-by-region', function(response) {
+                if (response.success) {
+                    const data = response.data.map(x => ({
+                        name: x.region,
+                        value: (x.revenue / 1000000).toFixed(0)
+                    }));
+
+                    const chart = echarts.init(document.getElementById('chartRevenueByRegion'));
+                    chart.setOption({
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: '{b}<br/><strong>{c}M VNĐ</strong> ({d}%)'
+                        },
+                        legend: {
+                            orient: 'horizontal',
+                            bottom: 0,
+                            left: 'center',
+                            icon: 'circle',
+                            itemGap: 15,
+                            textStyle: {
+                                fontSize: 11
+                            }
+                        },
+                        series: [{
+                            type: 'pie',
+                            radius: '65%',
+                            center: ['50%', '45%'],
+                            avoidLabelOverlap: true,
+                            minAngle: 10,
+                            itemStyle: {
+                                borderRadius: 5,
+                                borderColor: '#fff',
+                                borderWidth: 2
+                            },
+                            label: {
+                                show: true,
+                                position: 'outside',
+                                formatter: '{b}\n{d}%',
+                                fontSize: 11,
+                                fontWeight: 'bold',
+                                alignTo: 'edge',
+                                margin: 20,
+                                edgeDistance: '5%'
+                            },
+                            labelLine: {
+                                show: true,
+                                length: 15,
+                                length2: 10,
+                                smooth: 0.2
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            },
+                            data: data
+                        }]
+                    });
+                    window.addEventListener('resize', () => chart.resize());
+                }
+            });
+        }
+
+        // Chart 5: Revenue by Province
+        function loadRevenueByProvince() {
+            $.get('/Dashboard/GetChartData?chartType=revenue-by-province', function(response) {
+                if (response.success) {
+                    const data = response.data;
+                    const provinces = data.map(x => x.province);
+                    const revenues = data.map(x => (x.revenue / 1000000).toFixed(0));
+
+                    const chart = echarts.init(document.getElementById('chartRevenueByProvince'));
+                    chart.setOption({
+                        title: {
+                            text: 'Top 20 Tỉnh/Thành theo Doanh thu',
+                            left: 'center',
+                            textStyle: {
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                                color: '#333'
+                            }
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: { type: 'shadow' },
+                            formatter: function(params) {
+                                const value = parseFloat(params[0].value);
+                                return '<strong>' + params[0].name + '</strong><br/>' +
+                                       'Doanh thu: <strong style="color: #4CAF50;">' +
+                                       value.toLocaleString() + ' triệu VNĐ</strong>';
+                            },
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            borderColor: '#ccc',
+                            borderWidth: 1,
+                            textStyle: {
+                                color: '#333'
+                            }
+                        },
+                        grid: {
+                            left: '8%',
+                            right: '5%',
+                            bottom: '3%',
+                            top: '10%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'value',
+                            name: 'Triệu VNĐ',
+                            nameTextStyle: {
+                                fontSize: 14,
+                                fontWeight: 'bold',
+                                padding: [8, 0, 0, 0]
+                            },
+                            axisLabel: {
+                                formatter: function(value) {
+                                    if (value >= 1000) {
+                                        return (value / 1000).toFixed(1) + 'B';
+                                    }
+                                    return value + 'M';
+                                },
+                                fontSize: 12
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    type: 'dashed',
+                                    color: '#e0e0e0'
+                                }
+                            }
+                        },
+                        yAxis: {
+                            type: 'category',
+                            data: provinces.reverse(),
+                            axisLabel: {
+                                interval: 0,
+                                fontSize: 13,
+                                fontWeight: 'bold',
+                                color: '#555',
+                                margin: 15
+                            },
+                            axisLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: '#ccc'
+                                }
+                            },
+                            axisTick: {
+                                show: false
+                            }
+                        },
+                        series: [{
+                            name: 'Doanh thu',
+                            type: 'bar',
+                            data: revenues.reverse(),
+                            barWidth: '55%',
+                            barCategoryGap: '30%',
+                            itemStyle: {
+                                color: function(params) {
+                                    const colors = [
+                                        new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                                            { offset: 0, color: '#388E3C' },
+                                            { offset: 1, color: '#66BB6A' }
+                                        ]),
+                                        new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                                            { offset: 0, color: '#4CAF50' },
+                                            { offset: 1, color: '#81C784' }
+                                        ]),
+                                        new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                                            { offset: 0, color: '#66BB6A' },
+                                            { offset: 1, color: '#A5D6A7' }
+                                        ])
+                                    ];
+                                    if (params.dataIndex < 3) return colors[0];
+                                    if (params.dataIndex < 10) return colors[1];
+                                    return colors[2];
+                                },
+                                borderRadius: [0, 8, 8, 0],
+                                shadowBlur: 3,
+                                shadowColor: 'rgba(0, 0, 0, 0.1)',
+                                shadowOffsetY: 2
+                            },
+                            label: {
+                                show: true,
+                                position: 'right',
+                                formatter: function(params) {
+                                    return params.value + 'M';
+                                },
+                                fontSize: 12,
+                                fontWeight: 'bold',
+                                color: '#333',
+                                distance: 8
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                                        { offset: 0, color: '#2E7D32' },
+                                        { offset: 1, color: '#43A047' }
+                                    ]),
+                                    shadowBlur: 10,
+                                    shadowColor: 'rgba(0, 0, 0, 0.3)'
+                                }
+                            }
+                        }]
+                    });
+                    window.addEventListener('resize', () => chart.resize());
+                }
+            });
+        }
+
+        // Load Region Statistics
+        function loadRegionStats() {
+            $.get('/Dashboard/GetChartData?chartType=revenue-by-region', function(response) {
+                if (response.success) {
+                    const data = response.data;
+                    let html = '<div class="list-group">';
+
+                    data.forEach(item => {
+                        const revenueBillion = (item.revenue / 1000000000).toFixed(2);
+                        const percentage = ((item.revenue / data.reduce((a, b) => a + b.revenue, 0)) * 100).toFixed(1);
+
+                        html += `
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <h6 class="mb-1">${item.region}</h6>
+                                    <span class="badge bg-primary">${percentage}%</span>
+                                </div>
+                                <p class="mb-1">
+                                    <i class="fas fa-dollar-sign me-2 text-success"></i>
+                                    <strong>${revenueBillion}B VNĐ</strong>
+                                </p>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                         style="width: ${percentage}%"
+                                         aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    html += '</div>';
+                    $('#regionStats').html(html);
+                }
+            });
+        }
+
+        // Vietnam Map - Focus Miền Bắc
+        function loadVietnamMap() {
+            console.log('Loading Vietnam map - Focus Miền Bắc...');
+
+            const chartDom = document.getElementById('chartVietnamMap');
+            const existingChart = echarts.getInstanceByDom(chartDom);
+            if (existingChart) {
+                existingChart.dispose();
+                console.log('Disposed existing chart');
+            }
+
+            $.get('/Dashboard/GetChartData?chartType=revenue-by-province', function(response) {
+                if (response.success) {
+                    console.log('Original data from DB:', response.data);
+                    const originalData = response.data;
+
+                            
+        const provinceMapping = {
+            'Hà Nội': 'Ha Noi',
+            'Hải Phòng': 'HaiPhong',
+            'Hải Dương': 'Hải Dương',
+            'Bắc Ninh': 'Bắc Ninh',
+            'Quảng Ninh': 'Quảng Ninh',
+            'Nam Định': 'Nam Định',
+            'Thái Bình': 'Thái Bình',
+            'Ninh Bình': 'Ninh Bình',
+            'Hưng Yên': 'Hung Yen',
+            'Hà Nam': 'Hà Nam',
+            'Vĩnh Phúc': 'Vĩnh Phúc',
+            'Bắc Giang': 'Bắc Giang',
+            'Phú Thọ': 'Phú Thọ',
+            'Thái Nguyên': 'Thái Nguyên',
+            'Lạng Sơn': 'Lạng Sơn',
+            'Cao Bằng': 'Cao Bằng',
+            'Hà Giang': 'Hà Giang',
+            'Tuyên Quang': 'Tuyên Quang',
+            'Yên Bái': 'Yên Bái',
+            'Lào Cai': 'Lào Cai',
+            'Điện Biên': 'Điện Biên',
+            'Lai Châu': 'Lai Châu',
+            'Sơn La': 'Son La',
+            'Hòa Bình': 'Hòa Bình'
+        };
+
+                            const northernProvinces = Object.keys(provinceMapping);
+
+                    const mapData = originalData.map(item => {
+                        const provinceName = item.province.trim();
+                        const isNorthern = northernProvinces.includes(provinceName);
+                        const mappedName = provinceMapping[provinceName] || provinceName;
+
+                        return {
+                            name: mappedName,
+                            value: isNorthern ? parseFloat((item.revenue / 1000000).toFixed(0)) : null
+                        };
+                    });
+
+                    console.log('Mapped data for chart:', mapData);
+
+                    const vietnamGeoUrl = 'https://code.highcharts.com/mapdata/countries/vn/vn-all.geo.json';
+
+                    $.getJSON(vietnamGeoUrl, function(geoJson) {
+                        console.log('GeoJSON loaded successfully');
+
+                        if (geoJson.features) {
+                            const geoProvinces = geoJson.features.map(f => f.properties.name || f.properties['hc-key']);
+                            console.log('Provinces in GeoJSON:', geoProvinces);
+                        }
+
+                        echarts.registerMap('vietnam', geoJson);
+
+                        const chart = echarts.init(chartDom);
+
+                        const northernValues = mapData.filter(d => d.value !== null && d.value > 0).map(d => d.value);
+                        const maxValue = northernValues.length > 0 ? Math.max(...northernValues) : 10000;
+
+                        console.log('Northern values:', northernValues);
+                        console.log('Max value:', maxValue);
+
+                        chart.setOption({
+                            title: {
+                                text: 'Bản đồ Doanh thu Miền Bắc Việt Nam',
+                                left: 'center',
+                                top: 20,
+                                textStyle: {
+                                    fontSize: 20,
+                                    fontWeight: 'bold',
+                                    color: '#333'
+                                }
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: function(params) {
+                                    console.log('Tooltip params:', params);
+                                    if (params.data && params.data.value !== null && params.data.value > 0) {
+                                        return '<div style="padding: 10px;">' +
+                                               '<strong style="font-size: 14px;">' + params.name + '</strong><br/>' +
+                                               '<span style="color: #4CAF50; font-weight: bold;">' +
+                                               Number(params.data.value).toLocaleString() + ' triệu VNĐ</span>' +
+                                               '</div>';
+                                    }
+                                    return '<div style="padding: 10px;">' +
+                                           '<strong>' + params.name + '</strong><br/>' +
+                                           '<span style="color: #999;">Chưa có dữ liệu</span>' +
+                                           '</div>';
+                                },
+                                backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                                borderColor: '#ddd',
+                                borderWidth: 1,
+                                extraCssText: 'box-shadow: 0 2px 8px rgba(0,0,0,0.15);'
+                            },
+                            visualMap: {
+                                min: 0,
+                                max: maxValue,
+                                text: ['Cao', 'Thấp'],
+                                calculable: true,
+                                inRange: {
+                                    color: [
+                                        '#e8f5e9', '#c8e6c9', '#a5d6a7', '#81c784', '#66bb6a',
+                                        '#4caf50', '#43a047', '#388e3c', '#2e7d32', '#1b5e20'
+                                    ]
+                                },
+                                left: 20,
+                                top: 'middle',
+                                orient: 'vertical',
+                                itemWidth: 20,
+                                itemHeight: 140,
+                                textStyle: {
+                                    color: '#333',
+                                    fontSize: 12
+                                }
+                            },
+                            series: [{
+                                name: 'Doanh thu',
+                                type: 'map',
+                                map: 'vietnam',
+                                roam: true,
+                                scaleLimit: {
+                                    min: 1,
+                                    max: 10
+                                },
+                                zoom: 6,
+                                center: [106.2, 21.0],
+                                label: {
+                                    show: true,
+                                    fontSize: 11,
+                                    color: '#333',
+                                    fontWeight: 'bold'
+                                },
+                                emphasis: {
+                                    label: {
+                                        show: true,
+                                        fontSize: 14,
+                                        fontWeight: 'bold',
+                                        color: '#fff'
+                                    },
+                                    itemStyle: {
+                                        areaColor: '#FF9800',
+                                        borderWidth: 2,
+                                        borderColor: '#FF6F00',
+                                        shadowBlur: 15,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                },
+                                data: mapData,
+                                itemStyle: {
+                                    borderColor: '#fff',
+                                    borderWidth: 1.5,
+                                    areaColor: '#f0f0f0'
+                                }
+                            }]
+                        });
+
+                        console.log('Chart options set with zoom:', 6, 'center:', [106.2, 21.0]);
+
+                        setTimeout(function() {
+                            chart.resize();
+                            console.log('Chart resized');
+                        }, 300);
+
+                        window.addEventListener('resize', () => chart.resize());
+
+                    }).fail(function(error) {
+                        console.error('Failed to load GeoJSON:', error);
+                        $('#chartVietnamMap').html(
+                            '<div class="alert alert-warning text-center" style="margin: 50px;">' +
+                            '<i class="fas fa-exclamation-triangle me-2"></i>' +
+                            'Không thể tải bản đồ. Vui lòng kiểm tra kết nối mạng.' +
+                            '</div>'
+                        );
+                    });
+                }
+            }).fail(function(error) {
+                console.error('Failed to load province data:', error);
+            });
+        }
+
+        // Load AI Insights - Ẩn/Hiện khi click
+        function loadInsights(chartType, targetId) {
+            const containerId = targetId + '_container';
+            const buttonId = targetId + '_button';
+            const contentId = targetId + '_content';
+
+            const html = `
+                <div id="${containerId}" class="mt-3">
+                    <button id="${buttonId}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Xem phân tích
+                    </button>
+                    <div id="${contentId}" style="display: none;" class="mt-3"></div>
+                </div>
+            `;
+
+            $('#' + targetId).html(html);
+
+            $('#' + buttonId).on('click', function() {
+                const $button = $(this);
+                const $content = $('#' + contentId);
+
+                if ($content.is(':visible')) {
+                    $content.slideUp(300);
+                    $button.html('<i class="fas fa-lightbulb me-2"></i>Xem phân tích');
+                    $button.removeClass('btn-primary').addClass('btn-outline-primary');
+                } else {
+                    if ($content.is(':empty')) {
+                        $button.html('<i class="fas fa-spinner fa-spin me-2"></i>Đang tải...');
+                        $button.prop('disabled', true);
+
+                        $.get('/Dashboard/GetInsights?chartType=' + chartType, function(response) {
+                            if (response.success) {
+                                // FORMAT: Mỗi dòng có '•' hoặc '→' hoặc '✓' sẽ xuống dòng
+                                   let formattedInsights = response.insights
+        // Xuống dòng trước các ký tự đặc biệt
+        .replace(/•/g, '<br/>•')
+        .replace(/→/g, '<br/>→')
+        .replace(/✓/g, '<br/>✓')
+        .replace(/-/g, '<br/>-')
+           // Xuống dòng trước thẻ <strong> (có hoặc không có class)
+        .replace(/<strong>/g, '<br/><strong>')
+        .replace(/<strong class='/g, '<br/><strong class=\'')
+        // Xuống dòng sau thẻ đóng </strong> nếu theo sau là chữ viết thường
+        .replace(/<\/strong>\s*([a-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđ])/gi, '</strong><br/>$1')
+        // Bỏ double/triple break
+        .replace(/<br\/><br\/>/g, '<br/>')
+        .replace(/<br\/><br\/><br\/>/g, '<br/>')
+        // Bỏ <br/> đầu tiên nếu có
+        .replace(/^<br\/>/, '');
+
+                                const insightHtml = `
+                                    <div class="alert alert-light border-start border-4 shadow-sm" style="border-left-color: #8AAAE5 !important; background: #f8f9fa;">
+                                        <h6 class="mb-2">
+                                            <i class="fas fa-lightbulb me-2" style="color: #FF9800;"></i>
+                                            <strong>Phân tích thông minh</strong>
+                                        </h6>
+                                        <div style="line-height: 2; font-size: 14px; color: #555;">
+                                            ${formattedInsights}
+                                        </div>
+                                    </div>
+                                `;
+                                $content.html(insightHtml);
+                                $content.slideDown(300);
+                                $button.html('<i class="fas fa-eye-slash me-2"></i>Ẩn phân tích');
+                                $button.removeClass('btn-outline-primary').addClass('btn-primary');
+                                $button.prop('disabled', false);
+                            }
+                        });
+                    } else {
+                        $content.slideDown(300);
+                        $button.html('<i class="fas fa-eye-slash me-2"></i>Ẩn phân tích');
+                        $button.removeClass('btn-outline-primary').addClass('btn-primary');
+                    }
+                }
+            });
+        }
+    </script>
+}

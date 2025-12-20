@@ -1,0 +1,195 @@
+﻿@model CustomerProfitabilityWeb.Models.Entities.UploadBatch
+@{
+    ViewData["Title"] = "Chi tiết Upload";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/History/Index">Lịch sử Upload</a></li>
+            <li class="breadcrumb-item active">Chi tiết Batch #@Model.BatchID</li>
+        </ol>
+    </nav>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-info-circle me-2"></i>Chi tiết Upload Batch #@Model.BatchID</h2>
+            <p class="text-muted">Thông tin chi tiết về lần upload</p>
+        </div>
+    </div>
+
+    <!-- Batch Info -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="mb-3">
+                        <i class="fas fa-file-excel text-success me-2"></i>
+                        Thông tin File
+                    </h5>
+
+                    <table class="table table-borderless">
+                        <tr>
+                            <td width="40%" class="text-muted">Tên file:</td>
+                            <td><strong>@Model.FileName</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Kích thước:</td>
+                            <td>
+                                @if (Model.FileSize.HasValue)
+                                {
+                                    var fileMB = Model.FileSize.Value / (1024.0 * 1024.0);
+                                    <strong>@fileMB.ToString("N2") MB</strong>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Batch Name:</td>
+                            <td><strong>@Model.BatchName</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Ngày upload:</td>
+                            <td><strong>@Model.UploadDate.ToString("dd/MM/yyyy HH:mm:ss")</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Người upload:</td>
+                            <td><strong>@ViewBag.UserName</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Thời gian xử lý:</td>
+                            <td><strong>@(Model.ProcessingTime ?? 0) giây</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Trạng thái:</td>
+                            <td>
+                                @if (Model.Status == "Success")
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check me-1"></i>Thành công
+                                    </span>
+                                }
+                                else if (Model.Status == "Failed")
+                                {
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times me-1"></i>Thất bại
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-spinner fa-spin me-1"></i>Đang xử lý
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="mb-3">
+                        <i class="fas fa-chart-bar text-primary me-2"></i>
+                        Thống kê Import
+                    </h5>
+
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="fas fa-box fa-2x text-primary mb-2"></i>
+                                <h3 class="mb-0">@Model.TotalProducts</h3>
+                                <small class="text-muted">Sản phẩm</small>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="fas fa-users fa-2x text-info mb-2"></i>
+                                <h3 class="mb-0">@Model.TotalCustomers</h3>
+                                <small class="text-muted">Khách hàng</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded">
+                                <i class="fas fa-shopping-cart fa-2x text-warning mb-2"></i>
+                                <h3 class="mb-0">@Model.TotalTransactions</h3>
+                                <small class="text-muted">Giao dịch</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-light rounded">
+                                <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
+                                @{
+                                    var revenueMillion = Model.TotalRevenue / 1000000;
+                                }
+                                <h3 class="mb-0">@revenueMillion.ToString("N0")M</h3>
+                                <small class="text-muted">Doanh thu (VNĐ)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sample Transactions -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <h5 class="mb-3">
+                <i class="fas fa-list me-2"></i>
+                Giao dịch trong Batch
+            </h5>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Để xem chi tiết giao dịch, vui lòng vào <a href="/Dashboard/Index">Dashboard</a> để phân tích theo sản phẩm, khách hàng, và khu vực.
+            </div>
+            <div class="text-center">
+                <a href="/Dashboard/Index" class="btn btn-primary btn-lg">
+                    <i class="fas fa-chart-line me-2"></i>Xem Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-4 mb-5">
+        <a href="/History/Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Quay lại
+        </a>
+        <a href="/Dashboard/Index" class="btn btn-primary">
+            <i class="fas fa-chart-line me-2"></i>Xem Dashboard
+        </a>
+        <button class="btn btn-danger" onclick="deleteBatch(@Model.BatchID)">
+            <i class="fas fa-trash me-2"></i>Xóa Batch
+        </button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function deleteBatch(batchId) {
+            if (!confirm('Bạn có chắc muốn xóa batch này? Dữ liệu sẽ không thể khôi phục!')) {
+                return;
+            }
+
+            $.ajax({
+                url: '/History/Delete/' + batchId,
+                type: 'POST',
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        window.location.href = '/History/Index';
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Lỗi khi xóa batch');
+                }
+            });
+        }
+    </script>
+}

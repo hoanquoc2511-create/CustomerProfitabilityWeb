@@ -1,0 +1,87 @@
+﻿@model CustomerProfitabilityWeb.Models.ViewModels.LoginViewModel
+@{
+    Layout = "_LoginLayout";
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="login-container">
+    <div class="row g-0">
+        <!-- Phần trái - Thông tin -->
+        <div class="col-md-6 login-left">
+            <div>
+                <i class="fas fa-chart-line fa-4x mb-4"></i>
+                <h1>Customer Profitability</h1>
+                <p>Hệ thống phân tích lợi nhuận khách hàng thông minh với AI</p>
+                <ul class="list-unstyled mt-4">
+                    <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Upload Excel tự động</li>
+                    <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Dashboard trực quan</li>
+                    <li class="mb-2"><i class="fas fa-check-circle me-2"></i> AI phân tích thông minh</li>
+                    <li class="mb-2"><i class="fas fa-check-circle me-2"></i> Báo cáo chi tiết</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Phần phải - Form đăng nhập -->
+        <div class="col-md-6 login-right">
+            <h2><i class="fas fa-lock me-2"></i>Đăng nhập</h2>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    @Html.ValidationSummary(false, "", new { @class = "mb-0" })
+                </div>
+            }
+
+            <form asp-action="Login" method="post">
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label">
+                        <i class="fas fa-user me-2"></i>Tên đăng nhập
+                    </label>
+                    <input asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập" autofocus />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">
+                        <i class="fas fa-key me-2"></i>Mật khẩu
+                    </label>
+                    <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label">
+                        Ghi nhớ đăng nhập
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-login">
+                    <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                </button>
+            </form>
+
+            <div class="mt-4 text-center text-muted">
+                <small>
+                    <i class="fas fa-info-circle me-1"></i>
+                    Liên hệ quản trị viên nếu quên mật khẩu
+                </small>
+            </div>
+
+            <!-- Demo accounts (CHỈ HIỂN THỊ KHI DEVELOPMENT) -->
+            <div class="mt-4 p-3 bg-light rounded">
+                <small class="text-muted">
+                    <strong>Tài khoản demo:</strong><br>
+                    • admin / Admin@123<br>
+                    • manager1 / Manager@123<br>
+                    • user1 / User@123
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,363 @@
+﻿@{
+    ViewData["Title"] = "Upload Excel";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-upload me-2"></i>Upload File Excel</h2>
+            <p class="text-muted">Tải lên file Excel chứa dữ liệu giao dịch</p>
+        </div>
+    </div>
+
+    <!-- Upload Area -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5">
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt fa-4x text-primary mb-3"></i>
+                        <h4>Kéo thả file vào đây</h4>
+                        <p class="text-muted">hoặc</p>
+                        <label for="fileInput" class="btn btn-primary btn-lg">
+                            <i class="fas fa-folder-open me-2"></i>Chọn file Excel
+                        </label>
+                        <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                        <p class="text-muted mt-3 mb-0">
+                            <small>Chấp nhận: .xlsx, .xls (tối đa 10MB)</small>
+                        </p>
+                    </div>
+
+                    <!-- Progress -->
+                    <div id="progressArea" style="display: none;">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
+                            <h5 class="mt-3">Đang xử lý...</h5>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                 role="progressbar" style="width: 0%" id="progressBar">
+                                0%
+                            </div>
+                        </div>
+                        <p class="text-center text-muted mt-2" id="progressText">Đang upload file...</p>
+                    </div>
+
+                    <!-- Result -->
+                    <div id="resultArea" style="display: none;">
+                        <!-- Success/Error message will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-body">
+                    <h5><i class="fas fa-info-circle me-2"></i>Hướng dẫn</h5>
+                    <p>File Excel cần có <strong>4 sheets</strong> với tên và cột như sau:</p>
+
+                    <div class="accordion" id="instructionAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sheet1">
+                                    <strong>Sheet 1: "Products"</strong>
+                                </button>
+                            </h2>
+                            <div id="sheet1" class="accordion-collapse collapse" data-bs-parent="#instructionAccordion">
+                                <div class="accordion-body">
+                                    <table class="table table-sm table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Cột</th>
+                                                <th>Tên</th>
+                                                <th>Mô tả</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>A</td><td>ProductID</td><td>Mã sản phẩm (duy nhất)</td></tr>
+                                            <tr><td>B</td><td>ProductName</td><td>Tên sản phẩm</td></tr>
+                                            <tr><td>C</td><td>BU</td><td>Business Unit</td></tr>
+                                            <tr><td>D</td><td>Division</td><td>Phân loại</td></tr>
+                                            <tr><td>E</td><td>Industry</td><td>Ngành hàng</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sheet2">
+                                    <strong>Sheet 2: "Customers"</strong>
+                                </button>
+                            </h2>
+                            <div id="sheet2" class="accordion-collapse collapse" data-bs-parent="#instructionAccordion">
+                                <div class="accordion-body">
+                                    <table class="table table-sm table-bordered">
+                                        <thead>
+                                            <tr><th>Cột</th><th>Tên</th><th>Mô tả</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>A</td><td>CustomerID</td><td>Mã khách hàng</td></tr>
+                                            <tr><td>B</td><td>CustomerName</td><td>Tên khách hàng</td></tr>
+                                            <tr><td>C</td><td>Region</td><td>Khu vực (Miền Bắc/Trung/Nam)</td></tr>
+                                            <tr><td>D</td><td>Province</td><td>Tỉnh/Thành phố</td></tr>
+                                            <tr><td>E</td><td>District</td><td>Quận/Huyện</td></tr>
+                                            <tr><td>F</td><td>Industry</td><td>Ngành nghề</td></tr>
+                                            <tr><td>G</td><td>ExecutiveName</td><td>Nhân viên phụ trách</td></tr>
+                                            <tr><td>H</td><td>Email</td><td>Email</td></tr>
+                                            <tr><td>I</td><td>PhoneNumber</td><td>Số điện thoại</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sheet3">
+                                    <strong>Sheet 3: "Employees"</strong>
+                                </button>
+                            </h2>
+                            <div id="sheet3" class="accordion-collapse collapse" data-bs-parent="#instructionAccordion">
+                                <div class="accordion-body">
+                                    <table class="table table-sm table-bordered">
+                                        <thead>
+                                            <tr><th>Cột</th><th>Tên</th><th>Mô tả</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>A</td><td>ExecutiveID</td><td>Mã nhân viên</td></tr>
+                                            <tr><td>B</td><td>ExecutiveName</td><td>Tên nhân viên</td></tr>
+                                            <tr><td>C</td><td>Title</td><td>Chức danh</td></tr>
+                                            <tr><td>D</td><td>Region</td><td>Khu vực phụ trách</td></tr>
+                                            <tr><td>E</td><td>Email</td><td>Email</td></tr>
+                                            <tr><td>F</td><td>PhoneNumber</td><td>Số điện thoại</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sheet4">
+                                    <strong>Sheet 4: "Sales Transactions"</strong>
+                                </button>
+                            </h2>
+                            <div id="sheet4" class="accordion-collapse collapse" data-bs-parent="#instructionAccordion">
+                                <div class="accordion-body">
+                                    <table class="table table-sm table-bordered">
+                                        <thead>
+                                            <tr><th>Cột</th><th>Tên</th><th>Mô tả</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr><td>A</td><td>TransactionID</td><td>Mã giao dịch</td></tr>
+                                            <tr><td>B</td><td>Date</td><td>Ngày (dd/mm/yyyy)</td></tr>
+                                            <tr><td>C</td><td>ProductID</td><td>Mã sản phẩm</td></tr>
+                                            <tr><td>D</td><td>CustomerID</td><td>Mã khách hàng</td></tr>
+                                            <tr><td>E</td><td>ExecutiveID</td><td>Mã nhân viên</td></tr>
+                                            <tr><td>F</td><td>Scenario</td><td>Actual hoặc Budget</td></tr>
+                                            <tr><td>G</td><td>Quantity</td><td>Số lượng</td></tr>
+                                            <tr><td>H</td><td>UnitPrice</td><td>Đơn giá</td></tr>
+                                            <tr><td>I</td><td>Revenue</td><td>Doanh thu</td></tr>
+                                            <tr><td>J</td><td>COGS</td><td>Giá vốn</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning mt-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Lưu ý:</strong> Dòng đầu tiên của mỗi sheet phải là tên cột (header)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .upload-area {
+        border: 3px dashed #8AAAE5;
+        border-radius: 15px;
+        padding: 60px 20px;
+        text-align: center;
+        background: #f8f9fa;
+        transition: all 0.3s;
+    }
+
+        .upload-area:hover {
+            border-color: #6B8FD9;
+            background: #e9ecef;
+        }
+
+        .upload-area.dragover {
+            border-color: #4CAF50;
+            background: #d4edda;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            const uploadArea = $('#uploadArea');
+            const fileInput = $('#fileInput');
+            const progressArea = $('#progressArea');
+            const resultArea = $('#resultArea');
+            const progressBar = $('#progressBar');
+            const progressText = $('#progressText');
+
+            // File input change
+            fileInput.on('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    uploadFile(file);
+                }
+            });
+
+            // Drag & drop
+            uploadArea.on('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).addClass('dragover');
+            });
+
+            uploadArea.on('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).removeClass('dragover');
+            });
+
+            uploadArea.on('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).removeClass('dragover');
+
+                const files = e.originalEvent.dataTransfer.files;
+                if (files.length > 0) {
+                    uploadFile(files[0]);
+                }
+            });
+
+            function uploadFile(file) {
+                // Validate
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (ext !== 'xlsx' && ext !== 'xls') {
+                    alert('Chỉ chấp nhận file .xlsx hoặc .xls');
+                    return;
+                }
+
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File không được vượt quá 10MB');
+                    return;
+                }
+
+                // Show progress
+                uploadArea.hide();
+                resultArea.hide();
+                progressArea.show();
+                progressBar.css('width', '0%').text('0%');
+
+                // Simulate progress
+                let progress = 0;
+                const interval = setInterval(function() {
+                    progress += 5;
+                    if (progress <= 90) {
+                        progressBar.css('width', progress + '%').text(progress + '%');
+                    }
+                }, 200);
+
+                // Upload
+                const formData = new FormData();
+                formData.append('file', file);
+
+                $.ajax({
+                    url: '/Upload/ProcessFile',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        clearInterval(interval);
+                        progressBar.css('width', '100%').text('100%');
+
+                        setTimeout(function() {
+                            progressArea.hide();
+                            showResult(response);
+                        }, 500);
+                    },
+                    error: function(xhr) {
+                        clearInterval(interval);
+                        progressArea.hide();
+                        showResult({
+                            success: false,
+                            message: 'Lỗi upload: ' + (xhr.responseJSON?.message || 'Unknown error')
+                        });
+                    }
+                });
+            }
+
+            function showResult(response) {
+                resultArea.show();
+
+                if (response.success) {
+                    resultArea.html(`
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            <h4 class="alert-heading">
+                                <i class="fas fa-check-circle me-2"></i>Upload thành công!
+                            </h4>
+                            <p>${response.message}</p>
+                            <hr>
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <h3 class="text-primary">${response.data.products}</h3>
+                                    <small>Sản phẩm</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3 class="text-success">${response.data.customers}</h3>
+                                    <small>Khách hàng</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3 class="text-info">${response.data.employees}</h3>
+                                    <small>Nhân viên</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3 class="text-danger">${response.data.transactions}</h3>
+                                    <small>Giao dịch</small>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0">
+                                <strong>Tổng doanh thu:</strong> ${response.data.revenue} VNĐ
+                            </p>
+                            <div class="mt-3">
+                                <a href="/Dashboard/Index" class="btn btn-primary">
+                                    <i class="fas fa-chart-line me-2"></i>Xem Dashboard
+                                </a>
+                                <button class="btn btn-secondary" onclick="location.reload()">
+                                    <i class="fas fa-upload me-2"></i>Upload file khác
+                                </button>
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    resultArea.html(`
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            <h4 class="alert-heading">
+                                <i class="fas fa-times-circle me-2"></i>Upload thất bại!
+                            </h4>
+                            <p>${response.message}</p>
+                            <button class="btn btn-secondary mt-2" onclick="location.reload()">
+                                <i class="fas fa-redo me-2"></i>Thử lại
+                            </button>
+                        </div>
+                    `);
+                }
+            }
+        });
+    </script>
+}
