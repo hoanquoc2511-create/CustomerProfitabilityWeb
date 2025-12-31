@@ -1,5 +1,5 @@
-ASP.NET Core
-Chart.js
-ECharts
-EPPlus
+ASP.NET Core,
+Chart.js,
+ECharts,
+EPPlus,
 Bootstrap
